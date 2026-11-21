@@ -154,22 +154,17 @@
                   background 0.24s ease;
       box-shadow: 0 14px 34px rgba(15, 23, 42, 0.09), 0 2px 8px rgba(15, 23, 42, 0.05);
     }
-    /* 처음에 비스듬하게 약간 불규칙하게 서있는 연출 */
-    .product-card:nth-child(1) {
-      transform: rotateZ(-2.1deg) rotateY(7deg) rotateX(2.5deg) translateY(6px);
+    /* 처음에 약간 랜덤하게 비스듬히 서있는 연출 (JS에서 카드별 랜덤 각도 주입) */
+    .product-card {
+      transform: rotateZ(var(--rz, -1.8deg)) rotateY(var(--ry, 6deg)) rotateX(var(--rx, 2deg)) translateY(var(--ty, 0px));
     }
-    .product-card:nth-child(2) {
-      transform: rotateZ(1.7deg) rotateY(-5deg) rotateX(-2deg) translateY(-6px);
-    }
-    .product-card:nth-child(3) {
-      transform: rotateZ(-1.5deg) rotateY(6deg) rotateX(2deg) translateY(5px);
-    }
-    .product-card:hover {
-      transform: translateY(-8px) translateZ(24px) rotateZ(0deg) rotateY(0deg) rotateX(0deg) scale(1.025);
+    .product-card:hover,
+    .product-card:focus-visible {
+      transform: rotateX(calc(-1 * var(--grid-rx, 0deg))) rotateY(calc(-1 * var(--grid-ry, 0deg))) rotateZ(0deg) translateY(-8px) translateZ(36px) scale(1.03);
       border-color: var(--border-hover);
       background: var(--surface-hover);
-      box-shadow: 0 22px 46px rgba(236, 72, 153, 0.16), 0 10px 24px rgba(15, 23, 42, 0.1);
-      z-index: 5;
+      box-shadow: 0 24px 48px rgba(236, 72, 153, 0.18), 0 10px 24px rgba(15, 23, 42, 0.12);
+      z-index: 10;
     }
     .product-card:active {
       transform: translateY(-3px) scale(0.99);
@@ -315,9 +310,6 @@
       .emoji-banner .em-main { font-size: 46px; }
       .emoji-banner .em-side { font-size: 22px; }
       .card-body { padding: 16px; }
-      .product-card:nth-child(1) { transform: rotateZ(-1.3deg) translateY(0); }
-      .product-card:nth-child(2) { transform: rotateZ(1.1deg) translateY(0); }
-      .product-card:nth-child(3) { transform: rotateZ(-1.0deg) translateY(0); }
     }
   </style>
 </head>
@@ -690,6 +682,8 @@
         // Subtle 3D rotation of the card showcase grid when dragging empty space
         const cardDegY = Math.max(-24, Math.min(24, rotY * 26));
         const cardDegX = Math.max(-16, Math.min(16, -rotX * 22));
+        showcaseGrid.style.setProperty("--grid-ry", `${cardDegY.toFixed(2)}deg`);
+        showcaseGrid.style.setProperty("--grid-rx", `${cardDegX.toFixed(2)}deg`);
         showcaseGrid.style.transform = `rotateY(${cardDegY.toFixed(2)}deg) rotateX(${cardDegX.toFixed(2)}deg)`;
 
         for (const f of floaters) {
@@ -717,6 +711,19 @@
 
         rafId = requestAnimationFrame(animate);
       }
+
+      // Assign subtle random tilt to each card on load (straightens cleanly on hover)
+      document.querySelectorAll(".product-card").forEach((card, idx) => {
+        const sign = idx % 2 === 0 ? -1 : 1;
+        const rz = sign * (1.4 + Math.random() * 2.0);
+        const ry = -sign * (4.0 + Math.random() * 4.5);
+        const rx = (Math.random() - 0.5) * 4.5;
+        const ty = (Math.random() - 0.5) * 12;
+        card.style.setProperty("--rz", `${rz.toFixed(2)}deg`);
+        card.style.setProperty("--ry", `${ry.toFixed(2)}deg`);
+        card.style.setProperty("--rx", `${rx.toFixed(2)}deg`);
+        card.style.setProperty("--ty", `${ty.toFixed(1)}px`);
+      });
 
       // Initial wake (renders smoothly for ~4.5s on load, then sleeps until interaction)
       wakeRenderer();
