@@ -28,11 +28,14 @@
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
       cursor: grab;
+    }
+    html.hide-scrollbar,
+    body.hide-scrollbar {
       scrollbar-width: none;
       -ms-overflow-style: none;
     }
-    html::-webkit-scrollbar,
-    body::-webkit-scrollbar {
+    html.hide-scrollbar::-webkit-scrollbar,
+    body.hide-scrollbar::-webkit-scrollbar {
       display: none;
     }
     body.dragging-bg {
@@ -429,7 +432,7 @@
   </main>
 
   <!-- Full-Screen Open 3D Stage Space (Scroll down to view unobstructed 3D stars/moons/hearts) -->
-  <section aria-label="3D 배경 감상 공간" style="position:relative; z-index:1; min-height:115vh; display:flex; align-items:flex-end; justify-content:center; padding-bottom:28px; pointer-events:none;">
+  <section aria-label="3D 배경 감상 공간" style="position:relative; z-index:1; min-height:220vh; display:flex; align-items:flex-end; justify-content:center; padding-bottom:32px; pointer-events:none;">
     <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" style="pointer-events:auto; font-size:12px; font-weight:600; color:#475569; text-decoration:none; background:rgba(255,255,255,0.65); border:1px solid rgba(148,163,184,0.3); padding:6px 14px; border-radius:999px; backdrop-filter:blur(6px);">
       ↑ 앱 목록으로 돌아가기
     </a>
@@ -660,7 +663,16 @@
       window.addEventListener("pointerup", stopDrag);
       window.addEventListener("pointercancel", stopDrag);
 
-      window.addEventListener("scroll", wakeRenderer, { passive: true });
+      function updateScrollbarVisibility() {
+        const hide = window.scrollY >= 180;
+        document.documentElement.classList.toggle("hide-scrollbar", hide);
+        document.body.classList.toggle("hide-scrollbar", hide);
+      }
+      window.addEventListener("scroll", () => {
+        updateScrollbarVisibility();
+        wakeRenderer();
+      }, { passive: true });
+      updateScrollbarVisibility();
       window.addEventListener("resize", () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
