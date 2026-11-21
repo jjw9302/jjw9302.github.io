@@ -157,10 +157,10 @@
       color: inherit;
       cursor: pointer;
       transform-style: preserve-3d;
-      transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
-                  border-color 0.24s ease,
-                  box-shadow 0.28s ease,
-                  background 0.24s ease;
+      transition: transform 0.14s ease-out,
+                  border-color 0.12s ease,
+                  box-shadow 0.14s ease,
+                  background 0.12s ease;
       box-shadow: 0 14px 34px rgba(15, 23, 42, 0.09), 0 2px 8px rgba(15, 23, 42, 0.05);
     }
     /* 처음에 약간 랜덤하게 비스듬히 서있는 연출 (JS에서 카드별 랜덤 각도 주입) */
@@ -169,6 +169,10 @@
     }
     .product-card:hover,
     .product-card:focus-visible {
+      transition: transform 0.06s ease-out,
+                  border-color 0.08s ease,
+                  box-shadow 0.1s ease,
+                  background 0.08s ease;
       transform: rotateX(calc(-1 * var(--grid-rx, 0deg))) rotateY(calc(-1 * var(--grid-ry, 0deg))) rotateZ(0deg) translateY(-8px) translateZ(36px) scale(1.03);
       border-color: var(--border-hover);
       background: var(--surface-hover);
